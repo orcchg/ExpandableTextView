@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,8 +54,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     protected TextView mTv;
 
-    protected ImageButton mButton; // Button to expand/collapse
-
     private boolean mRelayout;
 
     private boolean mCollapsed = true; // Show short version as default.
@@ -68,10 +65,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private int mMaxCollapsedLines;
 
     private int mMarginBetweenTxtAndBottom;
-
-    private Drawable mExpandDrawable;
-
-    private Drawable mCollapseDrawable;
 
     private int mAnimationDuration;
 
@@ -111,12 +104,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        if (mButton.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
         mCollapsed = !mCollapsed;
-        mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
 
         if (mCollapsedStatus != null) {
             mCollapsedStatus.put(mPosition, mCollapsed);
@@ -168,6 +156,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     @Override
     protected void onFinishInflate() {
+        super.onFinishInflate();
         findViews();
     }
 
@@ -181,8 +170,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mRelayout = false;
 
         // Setup with optimistic case
-        // i.e. Everything fits. No button needed
-        mButton.setVisibility(View.GONE);
+        // i.e. Everything fits.
         mTv.setMaxLines(Integer.MAX_VALUE);
 
         // Measure
@@ -196,12 +184,10 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         // Saves the text height w/ max lines
         mTextHeightWithMaxLines = getRealTextViewHeight(mTv);
 
-        // Doesn't fit in collapsed mode. Collapse text view as needed. Show
-        // button.
+        // Doesn't fit in collapsed mode. Collapse text view as needed.
         if (mCollapsed) {
             mTv.setMaxLines(mMaxCollapsedLines);
         }
-        mButton.setVisibility(View.VISIBLE);
 
         // Re-measure with new setup
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -235,7 +221,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         boolean isCollapsed = collapsedStatus.get(position, true);
         clearAnimation();
         mCollapsed = isCollapsed;
-        mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
         setText(text);
         getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         requestLayout();
@@ -254,15 +239,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mMaxCollapsedLines = typedArray.getInt(R.styleable.ExpandableTextView_maxCollapsedLines, MAX_COLLAPSED_LINES);
         mAnimationDuration = typedArray.getInt(R.styleable.ExpandableTextView_animDuration, DEFAULT_ANIM_DURATION);
         mAnimAlphaStart = typedArray.getFloat(R.styleable.ExpandableTextView_animAlphaStart, DEFAULT_ANIM_ALPHA_START);
-        mExpandDrawable = typedArray.getDrawable(R.styleable.ExpandableTextView_expandDrawable);
-        mCollapseDrawable = typedArray.getDrawable(R.styleable.ExpandableTextView_collapseDrawable);
-
-        if (mExpandDrawable == null) {
-            mExpandDrawable = getDrawable(getContext(), R.drawable.ic_expand_more_black_12dp);
-        }
-        if (mCollapseDrawable == null) {
-            mCollapseDrawable = getDrawable(getContext(), R.drawable.ic_expand_less_black_12dp);
-        }
 
         typedArray.recycle();
 
@@ -276,9 +252,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private void findViews() {
         mTv = (TextView) findViewById(R.id.expandable_text);
         mTv.setOnClickListener(this);
-        mButton = (ImageButton) findViewById(R.id.expand_collapse);
-        mButton.setImageDrawable(mCollapsed ? mExpandDrawable : mCollapseDrawable);
-        mButton.setOnClickListener(this);
     }
 
     private static boolean isPostHoneycomb() {
