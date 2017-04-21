@@ -1,14 +1,16 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 android {
+    def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    compileSdkVersion project.ANDROID_COMPILE_SDK_VERSION
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion globalConfiguration["androidCompileSdkVersion"]
+    buildToolsVersion globalConfiguration["androidBuildToolsVersion"]
 
     defaultConfig {
-        minSdkVersion project.ANDROID_MIN_SDK_VERSION
-        targetSdkVersion project.ANDROID_TARGET_SDK_VERSION
+        minSdkVersion globalConfiguration["androidMinSdkVersion"]
+        targetSdkVersion globalConfiguration["androidTargetSdkVersion"]
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -18,10 +20,10 @@ android {
 }
 
 dependencies {
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+    def supportPackageVersion = globalConfiguration["androidSupportLibraryVersion"]
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // to support annotations such as @NonNull
     compile "com.android.support:support-annotations:${supportPackageVersion}"
 }
-
-// for maven central deployment
-apply from: 'https://raw.githubusercontent.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
