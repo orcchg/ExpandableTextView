@@ -57,6 +57,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private boolean mRelayout;
 
     private boolean mCollapsed = true; // Show short version as default.
+    private boolean mTextFitsCollapsedState = false;
 
     private int mCollapsedHeight;
 
@@ -178,6 +179,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         // If the text fits in collapsed mode, we are done.
         if (mTv.getLineCount() <= mMaxCollapsedLines) {
+            mTextFitsCollapsedState = true;
             return;
         }
 
@@ -232,6 +234,14 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             return "";
         }
         return mTv.getText();
+    }
+
+    public boolean isCollapsed() {
+        return mCollapsed;
+    }
+
+    public boolean isTextFitsCollapsedState() {
+        return mTextFitsCollapsedState;
     }
 
     private void init(AttributeSet attrs) {
