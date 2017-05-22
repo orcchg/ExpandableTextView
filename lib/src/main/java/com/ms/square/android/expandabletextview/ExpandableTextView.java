@@ -105,6 +105,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     @Override
     public void onClick(View view) {
+        if (mTextFitsCollapsedState) return;  // don't allow to collapse text if it fits collapsed state
+
         mCollapsed = !mCollapsed;
 
         if (mCollapsedStatus != null) {
