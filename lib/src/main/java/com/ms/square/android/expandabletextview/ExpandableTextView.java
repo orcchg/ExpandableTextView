@@ -17,6 +17,7 @@
 
 package com.ms.square.android.expandabletextview;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -198,16 +199,18 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
         if (mCollapsed) {
             // Gets the margin between the TextView's bottom and the ViewGroup's bottom
-            mTv.post(new Runnable() {
-                @Override
-                public void run() {
-                    mMarginBetweenTxtAndBottom = getHeight() - mTv.getHeight();
-                }
-            });
+            mTv.post(marginCalcOperation);
             // Saves the collapsed height of this ViewGroup
             mCollapsedHeight = getMeasuredHeight();
         }
     }
+
+    private Runnable marginCalcOperation = new Runnable() {
+        @Override
+        public void run() {
+            mMarginBetweenTxtAndBottom = getHeight() - mTv.getHeight();
+        }
+    };
 
     public void setOnExpandStateChangeListener(@Nullable OnExpandStateChangeListener listener) {
         mListener = listener;
@@ -266,6 +269,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mTv.setOnClickListener(this);
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private static boolean isPostHoneycomb() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
