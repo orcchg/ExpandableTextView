@@ -11,6 +11,10 @@ android {
         targetSdkVersion globalConfiguration["androidTargetSdkVersion"]
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
