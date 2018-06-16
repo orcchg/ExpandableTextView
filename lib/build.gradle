@@ -1,14 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    def globalConfiguration = rootProject.extensions.getByName("ext")
-
-    compileSdkVersion globalConfiguration["androidCompileSdkVersion"]
-    buildToolsVersion globalConfiguration["androidBuildToolsVersion"]
+    compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion globalConfiguration["androidMinSdkVersion"]
-        targetSdkVersion globalConfiguration["androidTargetSdkVersion"]
+        minSdkVersion 14
+        targetSdkVersion 27
     }
 
     lintOptions {
@@ -24,10 +21,6 @@ android {
 }
 
 dependencies {
-    def globalConfiguration = rootProject.extensions.getByName("ext")
-    def supportPackageVersion = globalConfiguration["androidSupportLibraryVersion"]
-
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    // to support annotations such as @NonNull
-    compile "com.android.support:support-annotations:${supportPackageVersion}"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:support-annotations:27.1.1"  // to support annotations such as @NonNull
 }
